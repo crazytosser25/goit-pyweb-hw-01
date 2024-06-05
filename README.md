@@ -1,5 +1,5 @@
-## goit-core-hw-07
-# Homework module 7. Assistant bot
+## goit-pyweb-hw-01
+# Homework module 1. Assistant bot
 
 Бот запускається файлом bot.py. Для виводу, при наявності, використовується
 colorama. За відсутності - вивід відбувається звичайним текстом. Данні
