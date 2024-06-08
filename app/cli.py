@@ -1,2 +1,4 @@
 class CommandLineInterface:
-    pass
+
+    def asking(self, phrase):
+        return input(f'{phrase}')

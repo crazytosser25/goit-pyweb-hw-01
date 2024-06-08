@@ -1,8 +1,11 @@
 """imports"""
 from collections import UserDict
 from datetime import date
-from app.functions import Decorators as decor, BirthdayFunctions as birth
 import app.record as rec
+from app.functions import (
+    Decorators as decor,
+    BirthdayFunctions as birth
+)
 
 
 class Singleton:

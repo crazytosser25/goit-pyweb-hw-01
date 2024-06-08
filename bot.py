@@ -5,10 +5,14 @@ from pathlib import Path
 from app.file import FileProcessor as fp
 from app.protection import Cipher
 from app.color import check_txt, color
+from app.cli import CommandLineInterface
 import app.commands as cmd
 
 
-def password_check(database: Path):
+database = Path("data/contacts.pkl")
+interface = CommandLineInterface()
+
+def password_check(base: Path):
     """ Function to prompt the user for a password and validate it 
         against the database.
 
@@ -22,9 +26,9 @@ def password_check(database: Path):
             after three incorrect attempts.
     """
     for attempt in range(3):
-        password = input('Please, enter password to AddressBook: ')
+        password = interface.asking('Please, enter password to AddressBook: ')
         cryptograph = Cipher(password)
-        contacts = fp.read_file(database, cryptograph)
+        contacts = fp.read_file(base, cryptograph)
         if contacts != 'wrong pass':
             return contacts, cryptograph
         print(color(
@@ -56,7 +60,6 @@ def main():
     uses the 'colorama' module to add colors to the output strings for better
     readability and Fernet for encrypting file.
     """
-    database = Path("data/contacts.pkl")
     try:
         contacts, cryptograph = password_check(database)
     except TypeError:
@@ -65,7 +68,7 @@ def main():
     print(check_txt('greeting'))
 
     while True:
-        user_input = input(check_txt('placeholder'))
+        user_input = interface.asking(check_txt('placeholder'))
         command, *args = parse_input(user_input)
 
         match command:
