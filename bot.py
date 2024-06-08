@@ -4,8 +4,7 @@ import sys
 from pathlib import Path
 from app.file import FileProcessor as fp
 from app.protection import Cipher
-from app.color import check_txt, color
-from app.cli import CommandLineInterface
+from app.interface import CommandLineInterface
 import app.commands as cmd
 
 
@@ -26,17 +25,15 @@ def password_check(base: Path):
             after three incorrect attempts.
     """
     for attempt in range(3):
-        password = interface.asking('Please, enter password to AddressBook: ')
+        password = interface.asking("Please, enter password to AddressBook: ")
         cryptograph = Cipher(password)
         contacts = fp.read_file(base, cryptograph)
         if contacts != 'wrong pass':
             return contacts, cryptograph
-        print(color(
-            f"Incorrect password. {2 - attempt} attempts left.",
-            'red'),
-            '\n'
+        interface.answer(
+            f"Incorrect password. {2 - attempt} attempts left."
         )
-    print(color("Access denied.", 'red'))
+    interface.answer("Access denied.")
     return None
 
 def parse_input(user_input: str) -> tuple:
@@ -63,52 +60,42 @@ def main():
     try:
         contacts, cryptograph = password_check(database)
     except TypeError:
-        print('no file')
         sys.exit()
-    print(check_txt('greeting'))
+    interface.answer("Welcome to the assistant bot!\n" \
+                "(enter 'help' for list of commands)\n")
+    working = True
 
-    while True:
-        user_input = interface.asking(check_txt('placeholder'))
+    while working:
+        user_input = interface.asking("Enter a command: ")
         command, *args = parse_input(user_input)
 
         match command:
             case "close" | "exit":
                 message = cmd.Close(database, contacts, cryptograph)
-                print(message.execute())
-                break
+                working = False
             case "hello":
                 message = cmd.Hello()
-                print(message.execute())
             case "help":
                 message = cmd.Help()
-                print(message.execute())
             case "add":
                 message = cmd.Add(contacts, args)
-                print(message.execute())
             case "addbirthday":
                 message = cmd.AddBirthday(contacts, args)
-                print(message.execute())
             case "change":
                 message = cmd.Change(contacts, *args)
-                print(message.execute())
             case "del":
                 message = cmd.Delete(contacts, args)
-                print(message.execute())
             case "phone":
                 message = cmd.Phone(contacts, args)
-                print(message.execute())
             case "all":
                 message = cmd.All(contacts)
-                print(message.execute())
             case "showbirthday":
                 message = cmd.ShowBirthday(contacts, args)
-                print(message.execute())
             case "birthdays":
                 message = cmd.Birthdays(contacts)
-                print(message.execute())
             case _:
                 message = cmd.WrongCommand()
-                print(message.execute())
+        interface.answer(message.execute())
 
 
 if __name__ == "__main__":

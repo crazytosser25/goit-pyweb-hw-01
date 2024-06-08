@@ -1,6 +1,5 @@
 """imports"""
 from datetime import datetime
-from app.color import color
 
 
 class Field:
@@ -73,10 +72,8 @@ class Record:
 
     def __str__(self):
         return (
-            f"{color('Contact name: ', 'cyan')}" \
-            f"{color(self.name.value, 'green').ljust(30, '.')}" \
-            f" phones: " \
-            f"{color('; '.join(phone.value for phone in self.phones), 'cyan')}"
+            f"{self.name.value.ljust(30, '.')}" \
+            f"{'; '.join(phone.value for phone in self.phones)}"
         )
 
     def add_phone(self, phone_number: str) -> None:
@@ -130,6 +127,7 @@ class Record:
         for number in self.phones:
             if number.value == phone_number:
                 return phone_number
+        return "No phone found"
 
     def remove_phone(self, phone: str) -> None:
         """Remove a phone number from the list.

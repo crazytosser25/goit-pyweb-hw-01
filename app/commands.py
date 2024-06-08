@@ -1,6 +1,6 @@
+"""imports"""
 from abc import ABC, abstractmethod
 from app.file import FileProcessor as fp
-from app.color import check_txt, color, command_help
 
 
 class Command(ABC):
@@ -17,22 +17,33 @@ class Close(Command):
 
     def execute(self) -> str:
         fp.write_file(self.database, self.contacts, self.cryptograph)
-        return check_txt('bye')
+        return "Good bye!\n"
 
 
 class Hello(Command):
     def execute(self) -> str:
-        return check_txt('hello')
+        return "How can I help you?\n"
 
 
 class Help(Command):
     def execute(self) -> str:
-        return command_help()
+        return "'add [name] [phone]'\t\t\tto add new contact " \
+            "(phone must be 10 digits).\n" \
+            "'add-birthday [name] [birth date]'\tto add date" \
+            "of birth (date must be in format 'DD.MM.YYYY').\n" \
+            "'all'\t\t\t\t\tto review all contacts.\n" \
+            "'birthdays'\t\t\t\tto show upcoming birthdays in 7 days.\n" \
+            "'change [name] [old phone] [new phone]'\t" \
+            "to change contact's phone number.\n" \
+            "'del [name]'\t\t\t\tto delete contact from list.\n" \
+            "'phone [name]'\t\t\t\tto review contact's phone number.\n" \
+            "'show-birthday [name]'\t\t\tto show birth date of contact.\n" \
+            "'close' or 'exit'\t\t\tto exit assistant.\n"
 
 
 class WrongCommand(Command):
     def execute(self):
-        return check_txt("invalid command")
+        return "Invalid command.\n"
 
 
 class Add(Command):
@@ -41,8 +52,7 @@ class Add(Command):
         self.args = args
 
     def execute(self) -> str:
-        return color(self.contacts.add_record(self.args), 'yellow') + '\n'
-
+        return f"{self.contacts.add_record(self.args)}\n"
 
 class AddBirthday(Command):
     def __init__(self, contacts, args) -> None:
@@ -51,7 +61,7 @@ class AddBirthday(Command):
 
     def execute(self):
         name, date = self.args
-        return color(self.contacts.birthday_date(name, date), 'yellow') + '\n'
+        return f"{self.contacts.birthday_date(name, date)}\n"
 
 class Change(Command):
     def __init__(self, contacts, *args) -> None:
@@ -59,7 +69,7 @@ class Change(Command):
         self.args = args
 
     def execute(self):
-        return color(self.contacts.change_phone(self.args), 'yellow') + '\n'
+        return f"{self.contacts.change_phone(self.args)}\n"
 
 
 class Delete(Command):
@@ -68,7 +78,7 @@ class Delete(Command):
         self.args = args
 
     def execute(self):
-        return color(self.contacts.delete(self.args), 'yellow') + '\n'
+        return f"{self.contacts.delete(self.args)}\n"
 
 
 class Phone(Command):
@@ -94,7 +104,7 @@ class ShowBirthday(Command):
         self.args = args
 
     def execute(self):
-        return color(self.contacts.show_birth_date(self.args), 'green') + '\n'
+        return f"{self.contacts.show_birth_date(self.args)}\n"
 
 
 class Birthdays(Command):
@@ -102,4 +112,4 @@ class Birthdays(Command):
         self.contacts = contacts
 
     def execute(self):
-        return self.contacts.get_upcoming_birthdays() + '\n'
+        return f"{self.contacts.get_upcoming_birthdays()}\n"

@@ -1,6 +1,5 @@
 """imports"""
 from datetime import datetime, timedelta
-from app.color import color
 from app.record import Record
 
 class Decorators:
@@ -43,7 +42,7 @@ class Decorators:
                 datetime.strptime(date, "%d.%m.%Y")
                 return func(contacts, name, date)
             except ValueError:
-                return f"{color("Date doesn't exist", 'red')}"
+                return "Date doesn't exist"
 
         return inner
 
@@ -84,7 +83,8 @@ class BirthdayFunctions:
     """Collection of submethods for AddressBook-Birthday"""
     @staticmethod
     def find_next_weekday(start_date, weekday) -> datetime:
-        """Finds the date of the next specified weekday after the given start date.
+        """Finds the date of the next specified weekday after the given start
+        date.
 
         Args:
             start_date (datetime): The date from which to start the search.
@@ -92,7 +92,8 @@ class BirthdayFunctions:
             where Monday is 0 and Sunday is 6.
 
         Returns:
-            datetime: The date of the next specified weekday after the start date.
+            datetime: The date of the next specified weekday after the start
+            date.
         """
         days_ahead = weekday - start_date.weekday()
         if days_ahead <= 0:
@@ -101,7 +102,8 @@ class BirthdayFunctions:
 
     @staticmethod
     def adjust_for_weekend(birthday: datetime) -> datetime:
-        """Adjusts the birthday date to the next Monday if it falls on a weekend.
+        """Adjusts the birthday date to the next Monday if it falls
+        on a weekend.
 
         Args:
             birthday (datetime): The birthday date to adjust.
@@ -150,6 +152,6 @@ class BirthdayFunctions:
         """
         output_string = ''
         for item in list_of_birthdays:
-            output_string += f"{color(item['name'], 'green').ljust(30, '.')}" \
-                            f"{color(item['congratulation_date'], 'cyan')}\n"
+            output_string += f"{item['name'].ljust(30, '.')}" \
+                            f"{item['congratulation_date']}\n"
         return output_string
