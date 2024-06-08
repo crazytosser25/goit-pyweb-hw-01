@@ -2,9 +2,10 @@
 import re
 import sys
 from pathlib import Path
-from app.file import read_file, write_file
+from app.file import FileProcessor as fp
 from app.protection import Cipher
-from app.color import check_txt, color, command_help
+from app.color import check_txt, color
+import app.commands as cmd
 
 
 def password_check(database: Path):
@@ -23,7 +24,7 @@ def password_check(database: Path):
     for attempt in range(3):
         password = input('Please, enter password to AddressBook: ')
         cryptograph = Cipher(password)
-        contacts = read_file(database, cryptograph)
+        contacts = fp.read_file(database, cryptograph)
         if contacts != 'wrong pass':
             return contacts, cryptograph
         print(color(
@@ -43,10 +44,10 @@ def parse_input(user_input: str) -> tuple:
     Returns:
         tuple: A tuple containing the command and its arguments.
     """
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
-    cmd = re.sub("[^A-Za-z]", "", cmd)
-    return cmd, *args
+    command, *args = user_input.split()
+    command = command.strip().lower()
+    command = re.sub("[^A-Za-z]", "", command)
+    return command, *args
 
 def main():
     """This code is designed to create a simple command-line interface (CLI)
@@ -59,6 +60,7 @@ def main():
     try:
         contacts, cryptograph = password_check(database)
     except TypeError:
+        print('no file')
         sys.exit()
     print(check_txt('greeting'))
 
@@ -68,31 +70,42 @@ def main():
 
         match command:
             case "close" | "exit":
-                write_file(database, contacts, cryptograph)
-                print(check_txt('bye'))
+                message = cmd.Close(database, contacts, cryptograph)
+                print(message.execute())
                 break
             case "hello":
-                print(check_txt('hello'))
+                message = cmd.Hello()
+                print(message.execute())
             case "help":
-                print(command_help())
+                message = cmd.Help()
+                print(message.execute())
             case "add":
-                print(color(contacts.add_record(args), 'yellow'), '\n')
+                message = cmd.Add(contacts, args)
+                print(message.execute())
             case "addbirthday":
-                print(color(contacts.birthday_date(args), 'yellow'), '\n')
+                message = cmd.AddBirthday(contacts, args)
+                print(message.execute())
             case "change":
-                print(color(contacts.change_phone(*args), 'yellow'), '\n')
+                message = cmd.Change(contacts, *args)
+                print(message.execute())
             case "del":
-                print(color(contacts.delete(args), 'yellow'), '\n')
+                message = cmd.Delete(contacts, args)
+                print(message.execute())
             case "phone":
-                print(contacts.find(args))
+                message = cmd.Phone(contacts, args)
+                print(message.execute())
             case "all":
-                print(contacts.show_all())
+                message = cmd.All(contacts)
+                print(message.execute())
             case "showbirthday":
-                print(color(contacts.show_birth_date(args), 'green'), '\n')
+                message = cmd.ShowBirthday(contacts, args)
+                print(message.execute())
             case "birthdays":
-                print(contacts.get_upcoming_birthdays(), '\n')
+                message = cmd.Birthdays(contacts)
+                print(message.execute())
             case _:
-                print(check_txt("invalid command"))
+                message = cmd.WrongCommand()
+                print(message.execute())
 
 
 if __name__ == "__main__":

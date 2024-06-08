@@ -1,11 +1,10 @@
 """imports"""
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.color import color
 from app.record import Record
 
 class Decorators:
-    """Collection of decorators for AddressBook
-    """
+    """Collection of decorators for AddressBook"""
     @staticmethod
     def validate_one_arg(func):
         """Decorator to validate functions with 1 argument."""
@@ -35,7 +34,7 @@ class Decorators:
     @staticmethod
     def validate_birthday(func):
         """Decorator to validate functions with 2 arguments."""
-        def inner(contacts, args):
+        def inner(contacts, *args):
             if len(args) != 2:
                 return 'invalid args'
             name = args[0]
@@ -79,3 +78,78 @@ class Decorators:
             return func(contacts, new_record)
 
         return inner
+
+
+class BirthdayFunctions:
+    """Collection of submethods for AddressBook-Birthday"""
+    @staticmethod
+    def find_next_weekday(start_date, weekday) -> datetime:
+        """Finds the date of the next specified weekday after the given start date.
+
+        Args:
+            start_date (datetime): The date from which to start the search.
+            weekday (int): The desired weekday as an integer,
+            where Monday is 0 and Sunday is 6.
+
+        Returns:
+            datetime: The date of the next specified weekday after the start date.
+        """
+        days_ahead = weekday - start_date.weekday()
+        if days_ahead <= 0:
+            days_ahead += 7
+        return start_date + timedelta(days=days_ahead)
+
+    @staticmethod
+    def adjust_for_weekend(birthday: datetime) -> datetime:
+        """Adjusts the birthday date to the next Monday if it falls on a weekend.
+
+        Args:
+            birthday (datetime): The birthday date to adjust.
+
+        Returns:
+            datetime: The adjusted birthday date, or the original date if it
+                falls on a weekday.
+        """
+        if birthday.weekday() >= 5:
+            return BirthdayFunctions.find_next_weekday(birthday, 0)
+        return birthday
+
+    @staticmethod
+    def date_to_string(date: datetime) -> str:
+        """Converts a datetime object to a string representation
+        in the format 'DD.MM.YYYY'.
+
+        Args:
+            date (datetime): The datetime object to convert.
+
+        Returns:
+            str: The string representation of the date in the format 'DD.MM.YYYY'.
+        """
+        try:
+            return date.strftime("%d.%m.%Y")
+        except AttributeError:
+            return 'No date added.'
+
+    @staticmethod
+    def stringify_birthdays(list_of_birthdays: list) -> str:
+        """Creates a formatted string representation of a list of birthdays.
+
+        Args:
+            list_of_birthdays (list): A list of dictionaries containing 'name'
+                and 'congratulation_date' keys.
+
+        Returns:
+            str: A formatted string representing the list of birthdays.
+
+        Example:
+            >birthdays = [{'name': 'John Doe', 'congratulation_date': '31-12-2024'}, 
+            >           {'name': 'Jane Smith', 'congratulation_date': '01-01-2025'}]
+            >stringify_birthdays(birthdays)
+            'John Doe......................31-12-2024'
+            'Jane Smith...................01-01-2025'
+        """
+        output_string = ''
+        for item in list_of_birthdays:
+            output_string += f"{color(item['name'], 'green').ljust(30, '.')}" \
+                            f"{color(item['congratulation_date'], 'cyan')}\n"
+        return output_string
