@@ -1,6 +1,15 @@
 ## goit-pyweb-hw-02
 # Homework module 2. Assistant bot
 
+to build image:
+
+    docker build -t my_bot . 
+
+To start container with saved outside container book:
+
+    docker run -it --rm -v /address_to_folder/goit-pyweb-hw-01/data:/assist/data my_bot
+
+Where change [address_to_folder] to location of repository on your pc.
 
 
 Бот запускається файлом bot.py. Данні

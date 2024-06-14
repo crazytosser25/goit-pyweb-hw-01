@@ -1,6 +1,7 @@
 [tool.poetry]
 name = "asistant"
 version = "0.1.0"
+package-mode = false
 description = "Bot-asistant"
 authors = ["YevheniiBaranov <j52b10i78@gmail.com>"]
 readme = "README.md"
