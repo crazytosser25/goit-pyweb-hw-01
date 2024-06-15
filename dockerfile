@@ -1,6 +1,6 @@
-FROM python:3.12-bookworm
+FROM python:3.12-slim-bookworm
 
-WORKDIR /assist
+WORKDIR /assistant
 COPY . .
 
 RUN pip install poetry
