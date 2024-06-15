@@ -11,7 +11,7 @@ To start container with saved outside container book:
 
 Where change [address_to_folder] to location of repository on your pc.
 
-Usaage of bot:
+#### Usaage of bot:
 
 Бот запускається файлом bot.py. 
 Данні книги контактів зберігаються у файлі contacts.pkl. За відсутності файла 
